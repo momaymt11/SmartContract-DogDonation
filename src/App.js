@@ -1,6 +1,19 @@
 import "./App.css";
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
+import {
+  Card,
+  CardBody,
+  CardTitle,
+  CardSubtitle,
+  Container,
+  Input,
+  Row,
+  Button,
+  InputGroup,
+  InputGroupText,
+  CardText,
+} from "reactstrap";
 
 const ADDRESS = "0x10e1bc34ae1a5c3a70c0cb59e6457ceb0a4dd9e9";
 const ABI = [
@@ -235,48 +248,69 @@ function App() {
         <h1>Dog Donation</h1>
         <br />
         <h2>balance : {balance}</h2>
-        <div
+        <Container
+          fluid="xl"
           style={{
+            // background: "red",
             display: "flex",
-            flexDirection: "row",
             flexWrap: "wrap",
+            justifyContent: "center",
           }}
         >
           {dogs.map((items) => (
-            <div
+            <Card
               style={{
-                background: "white",
-                margin: "8px",
-                border: "1px solid gray",
-                borderRadius: "8px",
-                flex: 1,
-                padding: "5px",
+                // padding: "10px",
+                margin: "10px",
+                // flex: 1,
+                maxWidth: "230px",
+                boxShadow: "1px 5px 10px -1px rgba(0,0,0,0.25)",
+                WebkitBoxShadow: "1px 5px 10px -1px rgba(0,0,0,0.25)",
+                MozBoxShadow: "1px 5px 10px -1px rgba(0,0,0,0.25)",
               }}
               key={items}
             >
-              <h3> name : {items[1]} </h3>
-              <h4> city : {items[2]} </h4>
-              <h5> note : {items[3]} </h5>
-              <h5> donate amount : {parseInt(items[5]["_hex"], 16)} </h5>
+              <CardTitle tag="h5">{items[1]}</CardTitle>
               <img src={items[4]} height="150" />
+              <CardBody>
+                <CardSubtitle className="mb-2 text-muted" tag="h6">
+                  donate amount :{" "}
+                  {ethers.utils.formatEther(parseInt(items[5]["_hex"], 16))} ETH
+                </CardSubtitle>
+                <CardSubtitle className="mb-2 text-muted" tag="h6">
+                  city : {items[2]}
+                </CardSubtitle>
+                <CardText>note : {items[3]} </CardText>
+
+                <CardSubtitle
+                  className="mb-2 text-muted"
+                  tag="h6"
+                ></CardSubtitle>
+              </CardBody>
+
               <br />
-              <input
-                onChange={(e) => {
-                  setDonatetodog(e.target.value);
-                }}
-              ></input>
-              <br />
-              <button
+              <InputGroup style={{ padding: "10px" }}>
+                <Input
+                  onChange={(e) => {
+                    setDonatetodog(e.target.value);
+                  }}
+                ></Input>
+                <InputGroupText>$</InputGroupText>
+              </InputGroup>
+              <Button
+                style={{ margin: "10px", marginTop: "0px" }}
+                color="success"
+                outline
                 onClick={() => {
                   let id = parseInt(items[0]["_hex"], 16);
                   doDonationstoDog(id);
                 }}
               >
-                Donate to this dog
-              </button>
-            </div>
+                Donate
+              </Button>
+            </Card>
           ))}
-        </div>
+        </Container>
 
         <br />
         <button
