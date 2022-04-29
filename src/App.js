@@ -214,8 +214,9 @@ function App() {
     let res = await meta_connect.getDogs();
     let res2 = await meta_connect.balance();
     setDogs(res);
-    setbalance(parseInt(res2["_hex"], 16));
-    console.log(res2);
+    setbalance(ethers.BigNumber.from(res2["_hex"]));
+
+    console.log("res2 =>", ethers.utils.formatEther(balance));
   }
 
   async function doDonations() {
@@ -268,7 +269,7 @@ function App() {
         <Progress
           animated
           color="success"
-          value={ethers.utils.formatEther(balance) * 1000000}
+          value={ethers.utils.formatEther(balance) * 100}
           style={{ width: "45vh" }}
         />
         <Container
@@ -294,8 +295,11 @@ function App() {
               <img src={items[4]} height="150" />
               <CardBody>
                 <CardSubtitle className="mb-2 text-muted" tag="h6">
-                  donate amount :{" "}
-                  {ethers.utils.formatEther(parseInt(items[5]["_hex"], 16))} ETH
+                  donate amount :
+                  {ethers.utils.formatEther(
+                    ethers.BigNumber.from(items[5]["_hex"])
+                  )}
+                  ETH
                 </CardSubtitle>
                 <CardSubtitle className="mb-2 text-muted" tag="h6">
                   city : {items[2]}
@@ -321,10 +325,9 @@ function App() {
                 style={{ margin: "10px", marginTop: "0px" }}
                 color="success"
                 outline
-                onClick={() => {
+                onClick={async () => {
                   let id = parseInt(items[0]["_hex"], 16);
-                  doDonationstoDog(id);
-                  getDog();
+                  await doDonationstoDog(id);
                 }}
               >
                 Donate
@@ -342,9 +345,8 @@ function App() {
           ></Input>
           <Button
             color="success"
-            onClick={() => {
-              doDonations();
-              getDog();
+            onClick={async () => {
+              await doDonations();
             }}
           >
             Donate to Website
