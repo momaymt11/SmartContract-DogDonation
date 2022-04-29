@@ -8,11 +8,11 @@ import {
   CardSubtitle,
   Container,
   Input,
-  Row,
   Button,
   InputGroup,
   InputGroupText,
   CardText,
+  Progress,
 } from "reactstrap";
 
 const ADDRESS = "0x10e1bc34ae1a5c3a70c0cb59e6457ceb0a4dd9e9";
@@ -192,11 +192,13 @@ const ABI = [
   },
 ];
 let meta_connect;
+
 function App() {
   const [donate, setDonate] = useState(0);
   const [donatetodog, setDonatetodog] = useState(0);
   const [dogs, setDogs] = useState([]);
   const [balance, setbalance] = useState(0);
+  const [owner, setowner] = useState("");
 
   async function mataconnect() {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -205,6 +207,7 @@ function App() {
     meta_connect = new ethers.Contract(ADDRESS, ABI, singer);
     console.log("Connected :", meta_connect);
     getDog();
+    getOwner();
   }
 
   async function getDog() {
@@ -239,19 +242,38 @@ function App() {
     }
   }
 
+  async function getOwner() {
+    let res = await meta_connect.owner();
+    setowner(res);
+    console.log("owner =>", res);
+  }
+
   useEffect(() => {
     mataconnect();
   }, []);
   return (
-    <div style={{ background: "whitesmoke", height: "100vh" }}>
-      <center>
+    <div
+      style={{
+        background: "whitesmoke",
+        minHeight: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <center style={{ marginTop: "20px", marginBottom: "20px" }}>
         <h1>Dog Donation</h1>
         <br />
-        <h2>balance : {balance}</h2>
+        <h2>balance : {ethers.utils.formatEther(balance)} ETH / 1 ETH</h2>
+        <Progress
+          animated
+          color="success"
+          value={ethers.utils.formatEther(balance) * 1000000}
+          style={{ width: "45vh" }}
+        />
         <Container
           fluid="xl"
           style={{
-            // background: "red",
             display: "flex",
             flexWrap: "wrap",
             justifyContent: "center",
@@ -260,9 +282,7 @@ function App() {
           {dogs.map((items) => (
             <Card
               style={{
-                // padding: "10px",
                 margin: "10px",
-                // flex: 1,
                 maxWidth: "230px",
                 boxShadow: "1px 5px 10px -1px rgba(0,0,0,0.25)",
                 WebkitBoxShadow: "1px 5px 10px -1px rgba(0,0,0,0.25)",
@@ -304,6 +324,7 @@ function App() {
                 onClick={() => {
                   let id = parseInt(items[0]["_hex"], 16);
                   doDonationstoDog(id);
+                  getDog();
                 }}
               >
                 Donate
@@ -313,27 +334,25 @@ function App() {
         </Container>
 
         <br />
-        <button
-          onClick={() => {
-            getDog();
-          }}
-        >
-          refresh data
-        </button>
+        <InputGroup style={{ width: "45vh" }}>
+          <Input
+            onChange={(e) => {
+              setDonate(e.target.value);
+            }}
+          ></Input>
+          <Button
+            color="success"
+            onClick={() => {
+              doDonations();
+              getDog();
+            }}
+          >
+            Donate to Website
+          </Button>
+        </InputGroup>
+
         <br />
-        <input
-          onChange={(e) => {
-            setDonate(e.target.value);
-          }}
-        ></input>
-        <button
-          onClick={() => {
-            doDonations();
-          }}
-        >
-          Donate
-        </button>
-        <br />
+        <h5>owner : {owner}</h5>
       </center>
     </div>
   );
