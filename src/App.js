@@ -249,7 +249,6 @@ function App() {
                 margin: "8px",
                 border: "1px solid gray",
                 borderRadius: "8px",
-                // height: "150px",
                 flex: 1,
                 padding: "5px",
               }}
@@ -298,7 +297,7 @@ function App() {
             doDonations();
           }}
         >
-          Donate to web
+          Donate
         </button>
         <br />
       </center>
